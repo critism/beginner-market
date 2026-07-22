@@ -1,0 +1,1237 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>my discord — community hub</title>
+<meta name="description" content="community hub: live member status, support tickets, staff applications, and your profile.">
+<style>
+:root{
+  --font: ui-sans-serif,"Inter","Segoe UI",system-ui,sans-serif;
+  --mono: ui-monospace,"JetBrains Mono","Cascadia Code",Consolas,monospace;
+  --radius:20px; --radius-sm:13px; --maxw:920px; --ease:cubic-bezier(.22,.9,.3,1);
+}
+[data-theme="dark"]{
+  --bg:#08080c; --glass:rgba(255,255,255,.045); --glass-strong:rgba(255,255,255,.07);
+  --glass-border:rgba(255,255,255,.09); --glass-border-hover:rgba(255,255,255,.18);
+  --glass-highlight:rgba(255,255,255,.14); --text:#eeeef4; --text-dim:#8b8b96;
+  --accent:#5865f2; --accent-soft:rgba(88,101,242,.12); --green:#4ade80;
+  --danger:#f87171; --warn:#d9a441;
+  --glow1:rgba(88,101,242,.16); --glow2:rgba(74,222,128,.10); --glow3:rgba(167,139,250,.10);
+}
+[data-theme="light"]{
+  --bg:#f0f2f7; --glass:rgba(255,255,255,.7); --glass-strong:rgba(255,255,255,.9);
+  --glass-border:rgba(20,20,40,.1); --glass-border-hover:rgba(20,20,40,.2);
+  --glass-highlight:rgba(255,255,255,1); --text:#17171d; --text-dim:#6d6d78;
+  --accent:#4752c4; --accent-soft:rgba(71,82,196,.10); --green:#15803d;
+  --danger:#dc2626; --warn:#a06f16;
+  --glow1:rgba(88,101,242,.12); --glow2:rgba(74,222,128,.10); --glow3:rgba(167,139,250,.09);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;transition:background .4s var(--ease),color .4s var(--ease);font-size:15px;letter-spacing:.1px;position:relative;}
+.orbs{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none;background:var(--bg);}
+.orb{position:absolute;border-radius:50%;filter:blur(90px);will-change:transform;}
+.orb.o1{width:520px;height:520px;background:var(--glow1);top:-160px;left:-120px;animation:float1 22s ease-in-out infinite;}
+.orb.o2{width:460px;height:460px;background:var(--glow2);top:30%;right:-160px;animation:float2 27s ease-in-out infinite;}
+.orb.o3{width:420px;height:420px;background:var(--glow3);bottom:-160px;left:28%;animation:float3 25s ease-in-out infinite;}
+@keyframes float1{0%,100%{transform:translate(0,0) scale(1);}33%{transform:translate(60px,40px) scale(1.08);}66%{transform:translate(-30px,70px) scale(.96);}}
+@keyframes float2{0%,100%{transform:translate(0,0) scale(1);}33%{transform:translate(-50px,50px) scale(1.05);}66%{transform:translate(40px,-40px) scale(.94);}}
+@keyframes float3{0%,100%{transform:translate(0,0) scale(1);}33%{transform:translate(50px,-50px) scale(.97);}66%{transform:translate(-60px,-20px) scale(1.06);}}
+@media(prefers-reduced-motion:reduce){.orb{animation:none !important;}}
+a{color:var(--text);text-decoration:none;}
+button{font-family:inherit;cursor:pointer;}
+:focus-visible{outline:1px solid var(--accent);outline-offset:3px;}
+.ic{width:16px;height:16px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round;flex:none;}
+::selection{background:var(--accent);color:#fff;}
+.glass{background:var(--glass);border:1px solid var(--glass-border);border-radius:var(--radius);backdrop-filter:blur(18px) saturate(1.3);-webkit-backdrop-filter:blur(18px) saturate(1.3);box-shadow:inset 0 1px 0 var(--glass-highlight),0 14px 40px rgba(0,0,0,.22);transition:border-color .3s,background .3s,transform .3s var(--ease);}
+.glass:hover{border-color:var(--glass-border-hover);background:var(--glass-strong);}
+
+header{position:sticky;top:14px;z-index:50;padding:0 16px;}
+.nav{max-width:var(--maxw);margin:0 auto;display:flex;align-items:center;gap:8px;padding:10px 16px;background:var(--glass);border:1px solid var(--glass-border);border-radius:999px;backdrop-filter:blur(20px) saturate(1.4);-webkit-backdrop-filter:blur(20px) saturate(1.4);box-shadow:inset 0 1px 0 var(--glass-highlight),0 10px 30px rgba(0,0,0,.2);}
+.logo{font-weight:650;font-size:.95rem;letter-spacing:-.3px;cursor:pointer;user-select:none;}
+.logo i{font-style:normal;color:var(--accent);}
+nav.links{display:flex;gap:2px;flex:1;justify-content:flex-end;flex-wrap:wrap;}
+nav.links a{color:var(--text-dim);font-size:.82rem;font-weight:450;padding:6px 11px;border-radius:999px;transition:color .2s,background .2s;}
+nav.links a:hover{color:var(--text);}
+nav.links a.active{color:var(--text);background:var(--glass-strong);border:1px solid var(--glass-border);padding:5px 10px;}
+nav.links a.role-only{display:none;}
+nav.links a.role-only.show{display:inline-block;}
+nav.links a#staffNav.show{color:var(--warn);}
+nav.links a#reviewNav.show{color:var(--green);}
+.theme-btn,.burger{border:none;background:none;color:var(--text-dim);width:32px;height:32px;display:grid;place-items:center;border-radius:999px;transition:color .2s;}
+.theme-btn:hover,.burger:hover{color:var(--text);}
+.burger{display:none;}
+.nav-user{display:flex;align-items:center;gap:8px;border:1px solid var(--glass-border);border-radius:999px;padding:4px 10px 4px 4px;background:var(--glass);cursor:pointer;transition:border-color .2s;}
+.nav-user:hover{border-color:var(--glass-border-hover);}
+.nav-user img{width:24px;height:24px;border-radius:50%;}
+.nav-user span{font-size:.78rem;font-weight:550;max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.login-pill{display:flex;align-items:center;gap:7px;border:none;border-radius:999px;background:var(--accent);color:#fff;font-weight:600;font-size:.78rem;padding:8px 15px;transition:filter .2s;}
+.login-pill:hover{filter:brightness(1.12);}
+@media(max-width:880px){
+  nav.links{display:none;position:absolute;top:calc(100% + 8px);left:16px;right:16px;flex-direction:column;background:var(--glass-strong);border:1px solid var(--glass-border);border-radius:var(--radius);backdrop-filter:blur(24px);padding:12px;justify-content:flex-start;box-shadow:0 14px 40px rgba(0,0,0,.3);}
+  nav.links.open{display:flex;}
+  .burger{display:grid;margin-left:auto;}
+}
+
+main{max-width:var(--maxw);margin:0 auto;padding:48px 22px 100px;}
+.page{display:none;animation:fadeUp .6s var(--ease);}
+.page.visible{display:block;}
+.page.leaving{display:block;animation:fadeOut .17s var(--ease) forwards;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px);filter:blur(6px);}to{opacity:1;transform:none;filter:blur(0);}}
+@keyframes fadeOut{from{opacity:1;transform:none;filter:blur(0);}to{opacity:0;transform:translateY(-8px);filter:blur(4px);}}
+@keyframes blink{0%,100%{opacity:.35;}50%{opacity:1;}}
+@media(prefers-reduced-motion:reduce){.page{animation:none;}*{transition:none !important;}}
+h1{font-size:clamp(1.5rem,4vw,2rem);margin-bottom:6px;letter-spacing:-.8px;font-weight:650;}
+h2{font-size:.95rem;margin:34px 0 12px;font-weight:600;}
+.sub{color:var(--text-dim);margin-bottom:28px;max-width:560px;line-height:1.65;font-size:.88rem;}
+
+.hero{position:relative;margin-top:8px;padding:56px 40px;background:var(--glass);border:1px solid var(--glass-border);border-radius:28px;backdrop-filter:blur(22px) saturate(1.4);-webkit-backdrop-filter:blur(22px) saturate(1.4);box-shadow:inset 0 1px 0 var(--glass-highlight),0 20px 60px rgba(0,0,0,.28);overflow:hidden;display:grid;grid-template-columns:1.2fr .8fr;gap:36px;align-items:center;}
+.hero::before{content:"";position:absolute;top:-60%;left:-20%;width:80%;height:120%;background:radial-gradient(circle,var(--glow1),transparent 65%);pointer-events:none;}
+@media(max-width:760px){.hero{grid-template-columns:1fr;padding:40px 26px;text-align:center;}}
+.hero h1{font-size:clamp(2rem,6vw,3rem);letter-spacing:-1.8px;margin-bottom:8px;}
+.hero h1 i{font-style:normal;color:var(--accent);}
+.hero .h-sub{color:var(--text-dim);font-size:.9rem;line-height:1.6;max-width:380px;}
+@media(max-width:760px){.hero .h-sub{margin:0 auto;}}
+.hero .h-actions{display:flex;gap:10px;margin-top:24px;flex-wrap:wrap;}
+@media(max-width:760px){.hero .h-actions{justify-content:center;}}
+.status-panel{position:relative;background:var(--glass-strong);border:1px solid var(--glass-border);border-radius:var(--radius);backdrop-filter:blur(24px);box-shadow:inset 0 1px 0 var(--glass-highlight);padding:22px;}
+.status-panel .p-label{font-family:var(--mono);font-size:.62rem;letter-spacing:1.4px;color:var(--text-dim);text-transform:uppercase;}
+.status-panel .p-big{font-family:var(--mono);font-size:2rem;font-weight:700;margin:8px 0 2px;}
+.status-panel .p-big i{font-style:normal;color:var(--green);}
+.status-panel .p-sub{font-size:.76rem;color:var(--text-dim);margin-bottom:16px;}
+.pulse{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--green);animation:blink 2.4s infinite;margin-right:6px;}
+.status-panel .btn{width:100%;}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;border:1px solid var(--glass-border);border-radius:999px;background:var(--glass);color:var(--text);font-weight:500;padding:10px 20px;font-size:.82rem;backdrop-filter:blur(10px);box-shadow:inset 0 1px 0 var(--glass-highlight);transition:border-color .2s,color .2s,background .2s;}
+.btn:hover{border-color:var(--glass-border-hover);background:var(--glass-strong);}
+.btn.solid{background:var(--accent);color:#fff;border-color:transparent;box-shadow:0 6px 24px var(--accent-soft),inset 0 1px 0 rgba(255,255,255,.3);}
+.btn.solid:hover{filter:brightness(1.1);}
+.btn.small{padding:7px 15px;font-size:.76rem;}
+.btn.green{background:var(--green);color:#08120c;border-color:transparent;}
+.btn.danger{background:transparent;border-color:color-mix(in srgb,var(--danger) 45%,transparent);color:var(--danger);}
+
+.tiles{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));margin-top:16px;}
+.tile{padding:22px;cursor:pointer;display:flex;flex-direction:column;gap:6px;}
+.tile:hover{transform:translateY(-3px);}
+.tile .t-top{display:flex;align-items:center;justify-content:space-between;}
+.tile .ic-wrap{width:38px;height:38px;border-radius:12px;background:var(--glass-strong);border:1px solid var(--glass-border);box-shadow:inset 0 1px 0 var(--glass-highlight);display:grid;place-items:center;color:var(--accent);}
+.tile .r-arrow{color:var(--text-dim);transition:transform .25s var(--ease),color .25s;}
+.tile:hover .r-arrow{transform:translateX(3px);color:var(--text);}
+.tile h3{font-size:.92rem;font-weight:600;margin-top:8px;}
+.tile p{color:var(--text-dim);font-size:.8rem;line-height:1.55;}
+
+.status-box{padding:22px;margin-bottom:12px;}
+.status-box h2{margin:0 0 14px;font-size:.86rem;}
+.stat-grid{display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(165px,1fr));}
+.stat{background:var(--glass);border:1px solid var(--glass-border);border-radius:var(--radius-sm);box-shadow:inset 0 1px 0 var(--glass-highlight);padding:15px;}
+.stat .k{font-family:var(--mono);font-size:.62rem;letter-spacing:1px;color:var(--text-dim);}
+.stat .v{font-family:var(--mono);font-size:1.05rem;font-weight:600;margin-top:6px;}
+.refresh-link{border:none;background:none;color:var(--text-dim);font-size:.74rem;font-family:var(--mono);margin-left:auto;transition:color .2s;display:flex;align-items:center;gap:6px;}
+.refresh-link:hover{color:var(--accent);}
+.status-row{display:flex;align-items:center;gap:12px;}
+.status-row .big{font-weight:600;font-size:.92rem;}
+.status-row .dim{color:var(--text-dim);font-size:.76rem;}
+.online-list{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;}
+.online-chip{display:flex;align-items:center;gap:7px;background:var(--glass);border:1px solid var(--glass-border);border-radius:999px;padding:5px 12px 5px 5px;font-size:.76rem;}
+.online-chip img{width:20px;height:20px;border-radius:50%;}
+
+form{display:flex;flex-direction:column;gap:13px;}
+form.narrow{max-width:520px;}
+label{font-size:.72rem;font-weight:550;color:var(--text-dim);letter-spacing:.3px;}
+input,select,textarea{width:100%;margin-top:6px;background:var(--glass);color:var(--text);border:1px solid var(--glass-border);border-radius:var(--radius-sm);padding:10px 13px;font-family:inherit;font-size:.85rem;backdrop-filter:blur(8px);box-shadow:inset 0 1px 0 var(--glass-highlight);transition:border-color .2s;}
+input:focus,select:focus,textarea:focus{border-color:var(--accent);outline:none;}
+select option{background:var(--bg);color:var(--text);}
+textarea{resize:vertical;min-height:105px;}
+input[readonly]{opacity:.7;cursor:not-allowed;}
+
+.ticket{padding:14px 17px;margin-bottom:9px;border-radius:var(--radius-sm);}
+.ticket .t-head{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center;}
+.ticket .t-id{font-family:var(--mono);font-size:.66rem;color:var(--text-dim);}
+.ticket .t-cat{font-family:var(--mono);font-size:.6rem;letter-spacing:.6px;color:var(--accent);border:1px solid color-mix(in srgb,var(--accent) 40%,transparent);background:var(--accent-soft);border-radius:6px;padding:2px 8px;}
+.ticket.closed .t-cat{color:var(--text-dim);border-color:var(--glass-border);background:transparent;}
+.ticket p.t-msg{font-size:.8rem;color:var(--text-dim);margin-top:8px;line-height:1.6;}
+.ticket .t-user{display:flex;align-items:center;gap:7px;margin-top:8px;font-size:.72rem;color:var(--text-dim);}
+.ticket .t-user img{width:18px;height:18px;border-radius:50%;}
+.ticket.closed{opacity:.7;}
+.thread{margin-top:12px;border-top:1px solid var(--glass-border);padding-top:12px;display:flex;flex-direction:column;gap:8px;}
+.msg{display:flex;gap:9px;align-items:flex-start;}
+.msg img{width:22px;height:22px;border-radius:50%;margin-top:2px;}
+.msg .m-body{background:var(--glass);border:1px solid var(--glass-border);border-radius:11px;padding:8px 12px;max-width:85%;}
+.msg .m-meta{font-family:var(--mono);font-size:.6rem;color:var(--text-dim);margin-bottom:3px;display:flex;gap:6px;align-items:center;}
+.msg .m-meta .m-staff{color:var(--warn);border:1px solid color-mix(in srgb,var(--warn) 45%,transparent);border-radius:4px;padding:0 5px;}
+.msg .m-text{font-size:.8rem;line-height:1.5;color:var(--text);}
+.msg.mine{flex-direction:row-reverse;}
+.msg.mine .m-body{background:var(--accent-soft);border-color:color-mix(in srgb,var(--accent) 35%,transparent);}
+.reply-row{display:flex;gap:8px;margin-top:10px;}
+.reply-row input{margin-top:0;flex:1;}
+.reply-row .btn{padding:9px 16px;}
+.t-actions{margin-top:10px;display:flex;gap:12px;}
+.small-btn{font-size:.68rem;font-weight:500;border:none;background:none;color:var(--text-dim);padding:4px 0;transition:color .2s;}
+.small-btn:hover{color:var(--danger);}
+.small-btn.ok:hover{color:var(--green);}
+.empty{color:var(--text-dim);font-size:.8rem;border:1px dashed var(--glass-border);border-radius:var(--radius-sm);padding:20px;text-align:center;}
+.locked{padding:34px;text-align:center;}
+.locked .ic{width:28px;height:28px;color:var(--text-dim);margin:0 auto 12px;}
+.locked p{color:var(--text-dim);font-size:.85rem;margin-bottom:18px;line-height:1.6;}
+.note-box{margin-top:24px;font-size:.76rem;color:var(--text-dim);border:1px dashed var(--glass-border);border-radius:var(--radius-sm);padding:13px 16px;line-height:1.65;}
+.note-box code{font-family:var(--mono);color:var(--accent);font-size:.7rem;}
+
+.profile-card{padding:26px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;}
+.profile-card img{width:72px;height:72px;border-radius:50%;border:2px solid var(--glass-border);}
+.profile-card .p-name{font-size:1.15rem;font-weight:650;}
+.profile-card .p-id{font-family:var(--mono);font-size:.7rem;color:var(--text-dim);margin-top:2px;}
+.profile-card .p-badges{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;}
+.p-badge{font-family:var(--mono);font-size:.62rem;letter-spacing:.6px;border-radius:6px;padding:3px 9px;border:1px solid var(--glass-border);color:var(--text-dim);}
+.p-badge.staff{color:var(--warn);border-color:color-mix(in srgb,var(--warn) 45%,transparent);}
+.p-badge.high{color:var(--green);border-color:color-mix(in srgb,var(--green) 45%,transparent);}
+.profile-stats{display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));margin-top:14px;}
+
+.app-card{padding:20px;margin-bottom:10px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
+.app-card .info{flex:1;min-width:220px;}
+.app-card h3{font-size:.9rem;font-weight:600;}
+.app-card p{color:var(--text-dim);font-size:.79rem;margin-top:3px;line-height:1.55;}
+.tag-open,.tag-closed{font-family:var(--mono);font-size:.6rem;letter-spacing:.8px;border-radius:6px;padding:3px 9px;}
+.tag-open{color:var(--green);border:1px solid color-mix(in srgb,var(--green) 40%,transparent);}
+.tag-closed{color:var(--text-dim);border:1px solid var(--glass-border);}
+.app-form-wrap{padding:24px;max-width:600px;margin-top:8px;display:none;}
+.app-form-wrap.open{display:block;animation:fadeUp .35s var(--ease);}
+.app-form-wrap h3{font-size:.95rem;margin-bottom:16px;}
+.app-form-wrap h3 i{font-style:normal;color:var(--accent);}
+.application{padding:15px 17px;margin-bottom:9px;border-radius:var(--radius-sm);}
+.application .a-head{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center;}
+.application .a-pos{font-family:var(--mono);font-size:.62rem;letter-spacing:.6px;color:var(--accent);border:1px solid color-mix(in srgb,var(--accent) 35%,transparent);background:var(--accent-soft);border-radius:6px;padding:2px 9px;}
+.application .a-id{font-family:var(--mono);font-size:.66rem;color:var(--text-dim);}
+.application .a-user{display:flex;align-items:center;gap:7px;margin-top:8px;font-size:.72rem;color:var(--text-dim);}
+.application .a-user img{width:18px;height:18px;border-radius:50%;}
+.application p.a-answer{font-size:.8rem;color:var(--text-dim);margin-top:8px;line-height:1.6;}
+.application .a-status{font-family:var(--mono);font-size:.64rem;margin-top:10px;}
+.a-status.pending{color:var(--warn);} .a-status.accepted{color:var(--green);} .a-status.denied{color:var(--danger);}
+.application .a-review{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;align-items:center;}
+.application .a-review input{margin-top:0;flex:1;min-width:180px;}
+
+.announcement{padding:18px 20px;margin-bottom:10px;border-radius:var(--radius-sm);}
+.announcement .an-head{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:baseline;}
+.announcement h3{font-size:.95rem;font-weight:650;}
+.announcement .an-date{font-family:var(--mono);font-size:.64rem;color:var(--text-dim);}
+.announcement .an-body{color:var(--text-dim);font-size:.84rem;line-height:1.65;margin-top:8px;white-space:pre-wrap;}
+.announcement .an-by{font-family:var(--mono);font-size:.64rem;color:var(--text-dim);margin-top:10px;}
+.announcement .an-del{border:none;background:none;color:var(--text-dim);font-size:.68rem;transition:color .2s;padding:0;margin-top:8px;}
+.announcement .an-del:hover{color:var(--danger);}
+.activity-row{display:flex;align-items:center;gap:12px;padding:12px 15px;margin-bottom:8px;border-radius:var(--radius-sm);}
+.activity-row img{width:34px;height:34px;border-radius:50%;}
+.activity-row .a-name{font-size:.86rem;font-weight:600;}
+.activity-row .a-role{font-family:var(--mono);font-size:.6rem;letter-spacing:.5px;margin-top:2px;}
+.activity-row .a-role.staff{color:var(--warn);} .activity-row .a-role.high_staff{color:var(--green);}
+.activity-row .a-seen{margin-left:auto;text-align:right;}
+.activity-row .a-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;}
+.activity-row .a-when{font-family:var(--mono);font-size:.72rem;}
+.activity-row .a-ago{font-size:.66rem;color:var(--text-dim);margin-top:2px;}
+.p-badge.owner{color:#f0b232;border-color:rgba(240,178,50,.5);}
+nav.links a#ownerNav.show{color:#f0b232;}
+/* latest announcement on home */
+.home-ann{padding:18px 22px;margin-top:14px;border-radius:var(--radius);display:flex;gap:14px;align-items:flex-start;cursor:pointer;}
+.home-ann .ha-tag{font-family:var(--mono);font-size:.58rem;letter-spacing:1px;color:var(--accent);border:1px solid color-mix(in srgb,var(--accent) 40%,transparent);background:var(--accent-soft);border-radius:5px;padding:3px 8px;flex:none;margin-top:2px;}
+.home-ann .ha-body{flex:1;min-width:0;}
+.home-ann .ha-title{font-size:.9rem;font-weight:600;}
+.home-ann .ha-text{color:var(--text-dim);font-size:.8rem;line-height:1.55;margin-top:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.home-ann .ha-date{font-family:var(--mono);font-size:.62rem;color:var(--text-dim);flex:none;}
+/* activity checks */
+.check{padding:16px 18px;margin-bottom:9px;border-radius:var(--radius-sm);}
+.check .c-head{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center;}
+.check .c-title{font-size:.9rem;font-weight:600;}
+.check .c-dead{font-family:var(--mono);font-size:.64rem;color:var(--text-dim);}
+.check .c-dead.urgent{color:var(--danger);}
+.check .c-bar{display:flex;gap:8px;align-items:center;margin-top:12px;flex-wrap:wrap;}
+.check .c-done{font-family:var(--mono);font-size:.66rem;color:var(--green);}
+.check .c-miss{font-family:var(--mono);font-size:.66rem;color:var(--danger);}
+.check .c-names{font-size:.72rem;color:var(--text-dim);margin-top:8px;line-height:1.6;}
+.strike-row{display:flex;align-items:center;gap:12px;padding:11px 15px;margin-bottom:7px;border-radius:var(--radius-sm);}
+.strike-row .s-name{font-size:.84rem;font-weight:550;flex:1;}
+.strike-dots{display:flex;gap:4px;}
+.strike-dots i{width:9px;height:9px;border-radius:50%;background:var(--glass-border);display:block;}
+.strike-dots i.on{background:var(--danger);}
+.strike-row.flagged{border-color:color-mix(in srgb,var(--danger) 50%,transparent);}
+.strike-row .s-flag{font-family:var(--mono);font-size:.6rem;color:var(--danger);}
+/* staff chat */
+.chat-box{padding:18px;border-radius:var(--radius);}
+.chat-scroll{max-height:340px;overflow-y:auto;display:flex;flex-direction:column;gap:9px;padding-right:4px;}
+.chat-msg{display:flex;gap:9px;align-items:flex-start;}
+.chat-msg img{width:26px;height:26px;border-radius:50%;flex:none;}
+.chat-msg .cm-body{background:var(--glass);border:1px solid var(--glass-border);border-radius:11px;padding:8px 12px;max-width:86%;}
+.chat-msg.mine{flex-direction:row-reverse;}
+.chat-msg.mine .cm-body{background:var(--accent-soft);border-color:color-mix(in srgb,var(--accent) 35%,transparent);}
+.chat-msg .cm-meta{font-family:var(--mono);font-size:.6rem;color:var(--text-dim);margin-bottom:3px;display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
+.cm-role{border-radius:4px;padding:0 5px;font-size:.55rem;}
+.cm-role.staff{color:var(--warn);border:1px solid color-mix(in srgb,var(--warn) 45%,transparent);}
+.cm-role.high_staff{color:var(--green);border:1px solid color-mix(in srgb,var(--green) 45%,transparent);}
+.cm-role.owner{color:#f0b232;border:1px solid rgba(240,178,50,.5);}
+.chat-msg .cm-text{font-size:.81rem;line-height:1.5;}
+.chat-msg .cm-del{border:none;background:none;color:var(--text-dim);font-size:.6rem;padding:0;margin-top:3px;transition:color .2s;}
+.chat-msg .cm-del:hover{color:var(--danger);}
+.toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--glass-strong);color:var(--text);font-size:.78rem;font-family:var(--mono);border:1px solid var(--glass-border);backdrop-filter:blur(20px);box-shadow:inset 0 1px 0 var(--glass-highlight),0 14px 40px rgba(0,0,0,.3);padding:10px 20px;border-radius:999px;opacity:0;transition:all .35s var(--ease);z-index:100;pointer-events:none;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+footer{padding:30px 22px;margin-top:20px;}
+.foot{max-width:var(--maxw);margin:0 auto;color:var(--text-dim);font-size:.7rem;line-height:1.8;border-top:1px solid var(--glass-border);padding-top:24px;}
+.foot .frow{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:16px;align-items:center;}
+.foot .flinks{display:flex;gap:12px;flex-wrap:wrap;}
+.foot .flinks a{color:var(--text-dim);transition:color .2s;}
+.foot .flinks a:hover{color:var(--text);}
+.foot .clock{font-family:var(--mono);font-size:.7rem;color:var(--text-dim);}
+.foot .clock i{font-style:normal;color:var(--accent);}
+</style>
+</head>
+<body>
+
+<div class="orbs"><div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div></div>
+
+<svg style="display:none" xmlns="http://www.w3.org/2000/svg">
+  <symbol id="i-discord" viewBox="0 0 24 24"><path d="M9 12a1 1 0 1 0 2 0 1 1 0 0 0-2 0Z"/><path d="M13 12a1 1 0 1 0 2 0 1 1 0 0 0-2 0Z"/><path d="M7.5 4.5c3-1 6-1 9 0l1.2 2.2c1.6 2.9 2.2 6 1.8 9.3-1.4 1.1-2.9 1.8-4.5 2.3l-.9-1.6c.5-.2 1-.4 1.5-.7-2.4 1.1-4.8 1.1-7.2 0 .5.3 1 .5 1.5.7l-.9 1.6c-1.6-.5-3.1-1.2-4.5-2.3-.4-3.3.2-6.4 1.8-9.3L7.5 4.5Z"/></symbol>
+  <symbol id="i-signal" viewBox="0 0 24 24"><path d="M2 20h.01"/><path d="M7 20v-4"/><path d="M12 20v-8"/><path d="M17 20V8"/><path d="M22 20V4"/></symbol>
+  <symbol id="i-ticket" viewBox="0 0 24 24"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2"/><path d="M13 17v2"/><path d="M13 11v2"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.7 9a.6.6 0 0 1-.6 0C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.2-2.7a1.2 1.2 0 0 1 1.6 0C14.5 3.8 17 5 19 5a1 1 0 0 1 1 1z"/></symbol>
+  <symbol id="i-clipboard" viewBox="0 0 24 24"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.9 4.9 1.4 1.4"/><path d="m17.7 17.7 1.4 1.4"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.3 17.7-1.4 1.4"/><path d="m19.1 4.9-1.4 1.4"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6h16"/><path d="M4 12h16"/><path d="M4 18h16"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></symbol>
+  <symbol id="i-logout" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></symbol>
+  <symbol id="i-crown" viewBox="0 0 24 24"><path d="M3 7l4 5 5-7 5 7 4-5v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/></symbol>
+</svg>
+
+<header>
+  <div class="nav">
+    <a class="logo" data-nav="home"><span id="logoName">my discord</span><i>.</i></a>
+    <nav class="links" id="navLinks">
+      <a data-nav="home">home</a>
+      <a data-nav="announcements">news</a>
+      <a data-nav="status">status</a>
+      <a data-nav="tickets">tickets</a>
+      <a data-nav="applications">applications</a>
+      <a data-nav="profile">profile</a>
+      <a data-nav="staff" class="role-only" id="staffNav">staff</a>
+      <a data-nav="review" class="role-only" id="reviewNav">review</a>
+      <a data-nav="rules">rules</a>
+    </nav>
+    <button class="login-pill" id="loginBtn">
+      <svg class="ic" style="width:14px;height:14px"><use href="#i-discord"/></svg>login with discord
+    </button>
+    <div class="nav-user" id="navUser" style="display:none" data-nav="profile">
+      <img id="navAvatar" alt=""><span id="navName"></span>
+    </div>
+    <button class="theme-btn" id="themeBtn" title="toggle theme" aria-label="toggle theme">
+      <svg class="ic" id="themeIcon"><use href="#i-moon"/></svg>
+    </button>
+    <button class="burger" id="burgerBtn" aria-label="menu"><svg class="ic"><use href="#i-menu"/></svg></button>
+  </div>
+</header>
+
+<main>
+
+  <!-- home -->
+  <section class="page" id="page-home">
+    <div class="hero">
+      <div class="h-left">
+        <h1><span id="heroName">my discord</span><i>.</i></h1>
+        <p class="h-sub">our community hub — check who's online, open support tickets, apply for the team, and manage your profile.</p>
+        <div class="h-actions">
+          <button class="btn solid" id="heroJoin"><svg class="ic" style="width:14px;height:14px"><use href="#i-discord"/></svg>join the server</button>
+          <button class="btn" data-nav="tickets">open a ticket</button>
+        </div>
+      </div>
+      <div class="status-panel">
+        <div class="p-label">members online</div>
+        <div class="p-big"><span id="heroOnline">–</span> <i>●</i></div>
+        <div class="p-sub"><span class="pulse"></span><span id="heroServerName">loading…</span></div>
+        <button class="btn" data-nav="status">view full status</button>
+      </div>
+    </div>
+    <!-- latest announcement (filled by js when logged in) -->
+    <div id="homeAnn"></div>
+
+    <div class="tiles">
+      <div class="tile glass" data-nav="status"><div class="t-top"><span class="ic-wrap"><svg class="ic"><use href="#i-signal"/></svg></span><svg class="ic r-arrow"><use href="#i-arrow"/></svg></div><h3>server status</h3><p>live online member count and who's active.</p></div>
+      <div class="tile glass" data-nav="tickets"><div class="t-top"><span class="ic-wrap"><svg class="ic"><use href="#i-ticket"/></svg></span><svg class="ic r-arrow"><use href="#i-arrow"/></svg></div><h3>support tickets</h3><p>log in to open and track your tickets.</p></div>
+      <div class="tile glass" data-nav="applications"><div class="t-top"><span class="ic-wrap"><svg class="ic"><use href="#i-clipboard"/></svg></span><svg class="ic r-arrow"><use href="#i-arrow"/></svg></div><h3>apply for staff</h3><p>join the team — apply for an open position.</p></div>
+      <div class="tile glass" data-nav="profile"><div class="t-top"><span class="ic-wrap"><svg class="ic"><use href="#i-user"/></svg></span><svg class="ic r-arrow"><use href="#i-arrow"/></svg></div><h3>your profile</h3><p>your account, role, and open tickets.</p></div>
+    </div>
+  </section>
+
+  <!-- announcements / news -->
+  <section class="page" id="page-announcements">
+    <h1>news</h1>
+    <p class="sub">announcements from the team. log in to read the latest.</p>
+
+    <div class="locked glass" id="annLocked">
+      <svg class="ic"><use href="#i-lock"/></svg>
+      <p>log in with discord to read announcements.</p>
+      <button class="btn solid" onclick="login()"><svg class="ic" style="width:14px;height:14px"><use href="#i-discord"/></svg>login with discord</button>
+    </div>
+
+    <div id="annUnlocked" style="display:none">
+      <!-- high staff: create form -->
+      <div class="glass" id="annCreate" style="display:none;padding:22px;margin-bottom:18px">
+        <h2 style="margin-top:0">post an announcement <svg class="ic" style="width:14px;height:14px;color:var(--green);vertical-align:-2px"><use href="#i-crown"/></svg></h2>
+        <form id="annForm">
+          <div><label for="annTitle">title</label><input id="annTitle" required maxlength="120" placeholder="e.g. weekend event!"></div>
+          <div><label for="annBody">message</label><textarea id="annBody" required maxlength="3000" placeholder="write your announcement…"></textarea></div>
+          <button class="btn solid" type="submit" style="align-self:flex-start">publish</button>
+        </form>
+      </div>
+      <div id="annList"><div class="empty">loading…</div></div>
+    </div>
+  </section>
+
+  <!-- status -->
+  <section class="page" id="page-status">
+    <h1>status</h1>
+    <p class="sub">live data from our discord server via the widget api.</p>
+    <div class="status-box glass">
+      <h2>server</h2>
+      <div class="status-row">
+        <span class="pulse"></span>
+        <div><div class="big" id="statusServerName">loading…</div><div class="dim" id="statusSub">fetching widget data…</div></div>
+        <button class="refresh-link" id="refreshBtn"><svg class="ic" style="width:12px;height:12px"><use href="#i-refresh"/></svg>refresh</button>
+      </div>
+    </div>
+    <div class="status-box glass">
+      <h2>activity</h2>
+      <div class="stat-grid">
+        <div class="stat"><div class="k">members online</div><div class="v" id="onlineCount">–</div></div>
+        <div class="stat"><div class="k">voice channels</div><div class="v" id="voiceCount">–</div></div>
+      </div>
+    </div>
+    <div class="status-box glass">
+      <h2>online now</h2>
+      <div class="online-list" id="onlineList"><span class="empty" style="border:none;padding:8px">loading…</span></div>
+    </div>
+    <div class="note-box">⚠️ enable the <b>server widget</b>: discord → server settings → widget → <code>enable server widget</code>.</div>
+  </section>
+
+  <!-- tickets -->
+  <section class="page" id="page-tickets">
+    <h1>tickets</h1>
+    <p class="sub">open a support ticket. login required so we know who you are.</p>
+    <div class="locked glass" id="ticketsLocked">
+      <svg class="ic"><use href="#i-lock"/></svg>
+      <p>you need to log in with discord<br>before you can create tickets.</p>
+      <button class="btn solid" onclick="login()"><svg class="ic" style="width:14px;height:14px"><use href="#i-discord"/></svg>login with discord</button>
+    </div>
+    <div id="ticketsUnlocked" style="display:none">
+      <h2>create a new ticket</h2>
+      <form id="ticketForm" class="narrow">
+        <div><label for="tUser">logged in as</label><input id="tUser" readonly></div>
+        <div><label for="tCat">category</label>
+          <select id="tCat"><option>general question</option><option>report a member</option><option>appeal a punishment</option><option>report a bug</option><option>other</option></select>
+        </div>
+        <div><label for="tMsg">description</label><textarea id="tMsg" required maxlength="1500" placeholder="describe your issue…"></textarea></div>
+        <button class="btn solid" type="submit" style="align-self:flex-start">submit ticket</button>
+      </form>
+      <h2>your tickets</h2>
+      <div id="ticketList"><div class="empty">loading…</div></div>
+    </div>
+  </section>
+
+  <!-- applications -->
+  <section class="page" id="page-applications">
+    <h1>applications</h1>
+    <p class="sub">apply to join the team. log in, pick a position, and fill out the form.</p>
+    <div class="locked glass" id="appsLocked">
+      <svg class="ic"><use href="#i-lock"/></svg>
+      <p>log in with discord to apply.</p>
+      <button class="btn solid" onclick="login()"><svg class="ic" style="width:14px;height:14px"><use href="#i-discord"/></svg>login with discord</button>
+    </div>
+    <div id="appsUnlocked" style="display:none">
+      <div class="app-card glass">
+        <div class="info"><h3>moderator</h3><p>keep an eye on chat, help members, handle reports. min age 16.</p></div>
+        <span class="tag-open">open</span>
+        <button class="btn small" onclick="openAppForm('moderator')">apply</button>
+      </div>
+      <div class="app-card glass">
+        <div class="info"><h3>event host</h3><p>plan and run community events, giveaways, and game nights.</p></div>
+        <span class="tag-open">open</span>
+        <button class="btn small" onclick="openAppForm('event host')">apply</button>
+      </div>
+      <div class="app-card glass">
+        <div class="info"><h3>developer</h3><p>bots, website, and tooling. currently closed.</p></div>
+        <span class="tag-closed">closed</span>
+      </div>
+
+      <div class="app-form-wrap glass" id="appFormWrap">
+        <h3>apply as <i id="appPosLabel">moderator</i></h3>
+        <form id="appForm">
+          <div><label for="aAge">age</label><input id="aAge" type="number" min="13" max="99" required placeholder="16"></div>
+          <div><label for="aAnswer">why you? experience &amp; motivation</label><textarea id="aAnswer" required maxlength="2000" placeholder="tell us about yourself…"></textarea></div>
+          <div style="display:flex;gap:10px;">
+            <button class="btn solid" type="submit">submit application</button>
+            <button class="btn" type="button" onclick="closeAppForm()">cancel</button>
+          </div>
+        </form>
+      </div>
+
+      <h2>your applications</h2>
+      <div id="myAppList"><div class="empty">loading…</div></div>
+    </div>
+  </section>
+
+  <!-- profile -->
+  <section class="page" id="page-profile">
+    <h1>profile</h1>
+    <p class="sub">your discord account and your activity on this site.</p>
+    <div class="locked glass" id="profileLocked">
+      <svg class="ic"><use href="#i-lock"/></svg>
+      <p>log in with discord to see your profile.</p>
+      <button class="btn solid" onclick="login()"><svg class="ic" style="width:14px;height:14px"><use href="#i-discord"/></svg>login with discord</button>
+    </div>
+    <div id="profileUnlocked" style="display:none">
+      <div class="profile-card glass">
+        <img id="pfAvatar" alt="">
+        <div>
+          <div class="p-name" id="pfName"></div>
+          <div class="p-id" id="pfId"></div>
+          <div class="p-badges" id="pfBadges"></div>
+        </div>
+        <button class="btn small" style="margin-left:auto" onclick="logout()"><svg class="ic" style="width:13px;height:13px"><use href="#i-logout"/></svg>log out</button>
+      </div>
+      <div class="profile-stats">
+        <div class="stat glass"><div class="k">open tickets</div><div class="v" id="pfOpenTickets">0</div></div>
+        <div class="stat glass"><div class="k">total tickets</div><div class="v" id="pfTotalTickets">0</div></div>
+        <div class="stat glass"><div class="k">applications</div><div class="v" id="pfApps">0</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- staff -->
+  <section class="page" id="page-staff">
+    <h1>staff panel</h1>
+    <p class="sub">every ticket from every member, live from the database. answer or resolve them here.</p>
+    <div class="locked glass" id="staffLocked"><svg class="ic"><use href="#i-shield"/></svg><p>this area is for staff only.</p></div>
+    <div id="staffUnlocked" style="display:none">
+
+      <!-- activity checks -->
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+        <h2 style="margin:0">activity checks</h2>
+        <button class="refresh-link" onclick="loadChecks()"><svg class="ic" style="width:12px;height:12px"><use href="#i-refresh"/></svg>refresh</button>
+      </div>
+      <div class="glass" id="checkCreate" style="display:none;padding:18px;margin-bottom:12px">
+        <form id="checkForm" style="flex-direction:row;flex-wrap:wrap;align-items:flex-end;gap:10px">
+          <div style="flex:1;min-width:180px"><label for="ckTitle">new check</label><input id="ckTitle" maxlength="120" placeholder="e.g. weekly activity check"></div>
+          <div style="width:110px"><label for="ckHours">hours</label><input id="ckHours" type="number" min="1" max="168" value="24"></div>
+          <button class="btn solid" type="submit">start check</button>
+        </form>
+      </div>
+      <div id="checkList"><div class="empty">loading…</div></div>
+
+      <!-- strikes -->
+      <h2>strikes</h2>
+      <div id="strikeList"><div class="empty">loading…</div></div>
+
+      <!-- staff chat -->
+      <div style="display:flex;align-items:center;gap:12px;margin:26px 0 14px">
+        <h2 style="margin:0">staff chat</h2>
+        <button class="refresh-link" onclick="loadStaffChat()"><svg class="ic" style="width:12px;height:12px"><use href="#i-refresh"/></svg>refresh</button>
+      </div>
+      <div class="chat-box glass">
+        <div class="chat-scroll" id="chatScroll"><div class="empty">loading…</div></div>
+        <div class="reply-row" style="margin-top:12px">
+          <input id="chatInput" maxlength="800" placeholder="message the team…"
+                 onkeydown="if(event.key==='Enter'){event.preventDefault();sendChat();}">
+          <button class="btn small" onclick="sendChat()">send</button>
+        </div>
+      </div>
+
+      <!-- who was last seen -->
+      <div style="display:flex;align-items:center;gap:12px;margin:26px 0 14px">
+        <h2 style="margin:0">last seen</h2>
+        <button class="refresh-link" onclick="loadStaffActivity()"><svg class="ic" style="width:12px;height:12px"><use href="#i-refresh"/></svg>refresh</button>
+      </div>
+      <div id="activityList"><div class="empty">loading…</div></div>
+
+      <!-- tickets -->
+      <div style="display:flex;align-items:center;gap:12px;margin:26px 0 14px">
+        <h2 style="margin:0">all tickets</h2>
+        <button class="refresh-link" onclick="loadStaffTickets()"><svg class="ic" style="width:12px;height:12px"><use href="#i-refresh"/></svg>refresh</button>
+      </div>
+      <div id="staffTicketList"><div class="empty">loading…</div></div>
+    </div>
+  </section>
+
+  <!-- review (high staff) -->
+  <section class="page" id="page-review">
+    <h1>application review <svg class="ic" style="width:16px;height:16px;color:var(--green);vertical-align:-2px"><use href="#i-crown"/></svg></h1>
+    <p class="sub">high staff only. accept or deny team applications — the applicant and staff channel get notified.</p>
+    <div class="locked glass" id="reviewLocked"><svg class="ic"><use href="#i-crown"/></svg><p>this area is for high staff only.</p></div>
+    <div id="reviewUnlocked" style="display:none">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+        <h2 style="margin:0">all applications</h2>
+        <button class="refresh-link" onclick="loadReview()"><svg class="ic" style="width:12px;height:12px"><use href="#i-refresh"/></svg>refresh</button>
+      </div>
+      <div id="reviewList"><div class="empty">loading…</div></div>
+    </div>
+  </section>
+
+  <!-- rules -->
+  <section class="page" id="page-rules">
+    <h1>rules</h1>
+    <p class="sub">these rules apply on the discord server and on this website.</p>
+    <div class="tiles" style="grid-template-columns:1fr;">
+      <div class="glass" style="padding:15px 18px;"><b style="font-size:.87rem">be respectful</b><p style="color:var(--text-dim);font-size:.8rem;margin-top:3px">insults, bullying, discrimination, and hate speech are forbidden.</p></div>
+      <div class="glass" style="padding:15px 18px;"><b style="font-size:.87rem">no spam &amp; advertising</b><p style="color:var(--text-dim);font-size:.8rem;margin-top:3px">chat spam and advertising other servers are forbidden.</p></div>
+      <div class="glass" style="padding:15px 18px;"><b style="font-size:.87rem">no nsfw content</b><p style="color:var(--text-dim);font-size:.8rem;margin-top:3px">keep all channels safe for everyone.</p></div>
+      <div class="glass" style="padding:15px 18px;"><b style="font-size:.87rem">follow discord's terms</b><p style="color:var(--text-dim);font-size:.8rem;margin-top:3px">discord's terms and community guidelines always apply.</p></div>
+      <div class="glass" style="padding:15px 18px;"><b style="font-size:.87rem">follow staff instructions</b><p style="color:var(--text-dim);font-size:.8rem;margin-top:3px">appeals go through the ticket system.</p></div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="foot">
+    <div class="frow">
+      <div class="flinks">
+        <a data-nav="home">home</a><a data-nav="status">status</a><a data-nav="tickets">tickets</a>
+        <a data-nav="applications">applications</a><a data-nav="profile">profile</a><a data-nav="rules">rules</a>
+        <a id="footDiscord" href="#" target="_blank" rel="noopener">discord</a>
+      </div>
+      <span class="clock" id="footClock">··<i>:</i>··</span>
+    </div>
+    <p>this website is an independent community project and is not affiliated with discord inc.<br>© 2026 <span id="footName">my discord</span>. all rights reserved.</p>
+  </div>
+</footer>
+
+<div class="toast" id="toast">copied</div>
+
+<script>
+/* ============================================================
+   ⚙️ CONFIG — see README-cloudflare.md
+   ============================================================ */
+const CONFIG = {
+  serverName: "my discord",
+  clientId:   "YOUR_CLIENT_ID",
+  redirectUri:"https://YOURNAME.github.io/YOURREPO/",
+  guildId:    "YOUR_GUILD_ID",
+  invite:     "https://discord.gg/YOUR-INVITE",
+  // your deployed cloudflare worker url (no trailing slash), e.g.
+  // https://discord-hub-api.yourname.workers.dev
+  apiBase:    "https://discord-hub-api.YOURNAME.workers.dev"
+};
+
+/* branding */
+["logoName","heroName","footName"].forEach(id => document.getElementById(id).textContent = CONFIG.serverName);
+document.getElementById("footDiscord").href = CONFIG.invite;
+document.getElementById("heroJoin").addEventListener("click", () => window.open(CONFIG.invite, "_blank"));
+
+/* small local store — only theme + the discord token live here now.
+   all real data lives in the cloudflare d1 database. */
+const LS = {
+  get:(k,f)=>{try{const v=localStorage.getItem("hub_"+k);return v?JSON.parse(v):f;}catch(e){return f;}},
+  set:(k,v)=>{try{localStorage.setItem("hub_"+k,JSON.stringify(v));}catch(e){}},
+  del:k=>{try{localStorage.removeItem("hub_"+k);}catch(e){}}
+};
+
+/* theme */
+const themeBtn=document.getElementById("themeBtn"),themeIcon=document.getElementById("themeIcon");
+let theme=LS.get("theme",window.matchMedia&&window.matchMedia("(prefers-color-scheme: light)").matches?"light":"dark");
+function applyTheme(){document.documentElement.setAttribute("data-theme",theme);themeIcon.innerHTML=`<use href="#i-${theme==="dark"?"moon":"sun"}"/>`;}
+themeBtn.addEventListener("click",()=>{theme=theme==="dark"?"light":"dark";applyTheme();LS.set("theme",theme);});
+applyTheme();
+
+/* clock */
+function tickClock(){const d=new Date();document.getElementById("footClock").innerHTML=`${String(d.getHours()).padStart(2,"0")}<i>:</i>${String(d.getMinutes()).padStart(2,"0")}`;}
+tickClock();setInterval(tickClock,15000);
+
+/* navigation */
+const pages=document.querySelectorAll(".page"),navLinks=document.querySelectorAll("nav.links a"),linksBox=document.getElementById("navLinks");
+let switching=false;
+function show(pageId){
+  const current=document.querySelector(".page.visible");
+  const next=document.getElementById("page-"+pageId)||document.getElementById("page-home");
+  navLinks.forEach(a=>a.classList.toggle("active",a.dataset.nav===pageId));
+  linksBox.classList.remove("open");
+  const reveal=()=>{
+    pages.forEach(p=>p.classList.remove("visible","leaving"));
+    next.classList.add("visible");
+    window.scrollTo({top:0,behavior:"smooth"});
+    if(pageId==="status")loadStatus();
+    if(pageId==="announcements")loadAnnouncements();
+    if(pageId==="tickets")loadMyTickets();
+    if(pageId==="applications")loadMyApplications();
+    if(pageId==="staff"){loadChecks();loadStaffChat();loadStaffActivity();loadStaffTickets();}
+    if(pageId==="home")loadHomeAnnouncement();
+    if(pageId==="review")loadReview();
+    switching=false;
+  };
+  if(!current||current===next||switching){reveal();return;}
+  switching=true;
+  current.classList.add("leaving");
+  setTimeout(reveal,170);   // let the old page fade out first
+}
+document.querySelectorAll("[data-nav]").forEach(el=>el.addEventListener("click",e=>{e.preventDefault();show(el.dataset.nav);}));
+document.getElementById("burgerBtn").addEventListener("click",()=>linksBox.classList.toggle("open"));
+
+/* toast */
+const toast=document.getElementById("toast");
+function showToast(msg){toast.textContent=msg;toast.classList.add("show");setTimeout(()=>toast.classList.remove("show"),2400);}
+
+/* ============================================================
+   auth — discord oauth (implicit) + role from the worker
+   ============================================================ */
+let token=LS.get("token",null);
+let user=null;   // { id, name, username, avatar, role }
+
+function login(){
+  if(CONFIG.clientId==="YOUR_CLIENT_ID"){showToast("setup needed — fill in CONFIG");return;}
+  const url="https://discord.com/oauth2/authorize"
+    +"?client_id="+encodeURIComponent(CONFIG.clientId)
+    +"&redirect_uri="+encodeURIComponent(CONFIG.redirectUri)
+    +"&response_type=token&scope=identify";
+  window.location.href=url;
+}
+window.login=login;
+function logout(){token=null;user=null;LS.del("token");renderAuth();show("home");showToast("logged out");}
+window.logout=logout;
+
+/* api helper — attaches the discord token */
+async function api(path,opts={}){
+  const res=await fetch(CONFIG.apiBase+path,{
+    ...opts,
+    headers:{"Content-Type":"application/json","Authorization":"Bearer "+token,...(opts.headers||{})}
+  });
+  if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error(e.error||res.status);}
+  return res.json();
+}
+
+async function handleOAuthReturn(){
+  const hash=new URLSearchParams(window.location.hash.slice(1));
+  const t=hash.get("access_token");
+  if(t){token=t;LS.set("token",t);history.replaceState(null,"",window.location.pathname);}
+  if(!token)return;
+  try{
+    const {user:u}=await api("/api/me");   // worker verifies token + returns role
+    user=u;
+    showToast("welcome, "+user.name+" ✔");
+  }catch(e){token=null;user=null;LS.del("token");}
+}
+
+function isStaff(){return user&&["staff","high_staff","owner"].includes(user.role);}
+function isHigh(){return user&&["high_staff","owner"].includes(user.role);}
+function isOwner(){return user&&user.role==="owner";}
+
+function renderAuth(){
+  const on=!!user;
+  document.getElementById("loginBtn").style.display=on?"none":"flex";
+  document.getElementById("navUser").style.display=on?"flex":"none";
+  document.getElementById("ticketsLocked").style.display=on?"none":"block";
+  document.getElementById("ticketsUnlocked").style.display=on?"block":"none";
+  document.getElementById("appsLocked").style.display=on?"none":"block";
+  document.getElementById("appsUnlocked").style.display=on?"block":"none";
+  document.getElementById("profileLocked").style.display=on?"none":"block";
+  document.getElementById("profileUnlocked").style.display=on?"block":"none";
+  document.getElementById("staffNav").classList.toggle("show",isStaff());
+  document.getElementById("staffLocked").style.display=isStaff()?"none":"block";
+  document.getElementById("staffUnlocked").style.display=isStaff()?"block":"none";
+  document.getElementById("reviewNav").classList.toggle("show",isHigh());
+  document.getElementById("reviewLocked").style.display=isHigh()?"none":"block";
+  document.getElementById("reviewUnlocked").style.display=isHigh()?"block":"none";
+  document.getElementById("annLocked").style.display=on?"none":"block";
+  document.getElementById("annUnlocked").style.display=on?"block":"none";
+  document.getElementById("annCreate").style.display=isHigh()?"block":"none";
+  document.getElementById("checkCreate").style.display=isHigh()?"block":"none";
+
+  if(on){
+    document.getElementById("navAvatar").src=user.avatar;
+    document.getElementById("navName").textContent=user.name;
+    document.getElementById("tUser").value=user.name+" ("+user.id+")";
+    document.getElementById("pfAvatar").src=user.avatar;
+    document.getElementById("pfName").textContent=user.name;
+    document.getElementById("pfId").textContent="@"+user.username+" · "+user.id;
+    let badges=`<span class="p-badge">member</span>`;
+    if(isStaff())badges+=`<span class="p-badge staff">staff</span>`;
+    if(isHigh())badges+=`<span class="p-badge high">high staff</span>`;
+    if(isOwner())badges+=`<span class="p-badge owner">owner</span>`;
+    document.getElementById("pfBadges").innerHTML=badges;
+    refreshProfileCounts();
+    loadHomeAnnouncement();
+  }
+}
+document.getElementById("loginBtn").addEventListener("click",login);
+
+/* ============================================================
+   status — discord widget (public, no auth)
+   ============================================================ */
+async function loadStatus(){
+  const nameEls=[document.getElementById("statusServerName"),document.getElementById("heroServerName")];
+  try{
+    const res=await fetch(`https://discord.com/api/guilds/${CONFIG.guildId}/widget.json`);
+    if(!res.ok)throw new Error(res.status);
+    const d=await res.json();
+    nameEls.forEach(el=>el.textContent=d.name);
+    document.getElementById("statusSub").textContent="widget api connected";
+    document.getElementById("heroOnline").textContent=d.presence_count;
+    document.getElementById("onlineCount").textContent=d.presence_count;
+    document.getElementById("voiceCount").textContent=(d.channels||[]).length;
+    const list=document.getElementById("onlineList");
+    const members=(d.members||[]).slice(0,30);
+    list.innerHTML=members.length?members.map(m=>`<span class="online-chip"><img src="${m.avatar_url}" alt="">${m.username}</span>`).join(""):`<span class="empty" style="border:none;padding:8px">nobody visible right now.</span>`;
+  }catch(e){
+    nameEls.forEach(el=>el.textContent="widget unavailable");
+    document.getElementById("statusSub").textContent="enable the server widget + check the guild id.";
+    document.getElementById("heroOnline").textContent="–";
+  }
+}
+document.getElementById("refreshBtn").addEventListener("click",loadStatus);
+
+/* ============================================================
+   tickets (via worker + d1)
+   ============================================================ */
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function fmt(ts){const d=new Date(ts);return d.toLocaleDateString("en-US")+" "+String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0");}
+
+async function loadMyTickets(){
+  if(!user)return;
+  const box=document.getElementById("ticketList");
+  try{
+    const {tickets}=await api("/api/tickets");
+    await renderTicketList(box,tickets,false);
+  }catch(e){box.innerHTML=`<div class="empty">could not load tickets (${escapeHtml(e.message)})</div>`;}
+}
+async function loadStaffTickets(){
+  if(!isStaff())return;
+  const box=document.getElementById("staffTicketList");
+  try{
+    const {tickets}=await api("/api/tickets?scope=all");
+    await renderTicketList(box,tickets,true);
+  }catch(e){box.innerHTML=`<div class="empty">could not load tickets (${escapeHtml(e.message)})</div>`;}
+}
+
+async function renderTicketList(box,tickets,staffView){
+  if(!tickets.length){box.innerHTML=`<div class="empty">no tickets yet.</div>`;return;}
+  /* fetch messages for each ticket in parallel */
+  const detailed=await Promise.all(tickets.map(async t=>{
+    try{const d=await api("/api/tickets/"+t.id);return d;}catch(e){return {ticket:t,messages:[]};}
+  }));
+  box.innerHTML=detailed.map(d=>ticketHtml(d.ticket,d.messages,staffView)).join("");
+}
+
+function ticketHtml(t,messages,staffView){
+  const closed=t.status==="closed";
+  const msgs=(messages||[]).map(m=>`
+    <div class="msg ${user&&m.author_id===user.id?"mine":""}">
+      <img src="${m.author_avatar}" alt="">
+      <div class="m-body">
+        <div class="m-meta">${escapeHtml(m.author_name)}${m.is_staff?`<span class="m-staff">staff</span>`:""} · ${fmt(m.created)}</div>
+        <div class="m-text">${escapeHtml(m.text)}</div>
+      </div>
+    </div>`).join("");
+  return `
+    <div class="ticket glass ${closed?"closed":""}">
+      <div class="t-head">
+        <span class="t-cat">${escapeHtml(t.category)}${closed?" · closed":""}</span>
+        <span class="t-id">#${t.id} · ${fmt(t.created)}</span>
+      </div>
+      <p class="t-msg">${escapeHtml(t.message)}</p>
+      <div class="t-user"><img src="${t.user_avatar}" alt="">${escapeHtml(t.user_name)}</div>
+      ${msgs?`<div class="thread">${msgs}</div>`:""}
+      ${!closed?`
+      <div class="reply-row">
+        <input id="reply-${staffView?"s":"u"}-${t.id}" maxlength="800" placeholder="write a message…"
+               onkeydown="if(event.key==='Enter'){event.preventDefault();sendReply(${t.id},${staffView});}">
+        <button class="btn small" onclick="sendReply(${t.id},${staffView})">send</button>
+      </div>`:""}
+      <div class="t-actions">
+        ${!closed?(staffView
+          ?`<button class="small-btn ok" onclick="setTicket(${t.id},'closed',${staffView})">mark resolved</button>`
+          :`<button class="small-btn" onclick="setTicket(${t.id},'closed',${staffView})">close ticket</button>`)
+          :`<span class="small-btn" style="cursor:default">resolved</span>`}
+      </div>
+    </div>`;
+}
+
+window.sendReply=async(id,staffView)=>{
+  const input=document.getElementById(`reply-${staffView?"s":"u"}-${id}`);
+  const text=(input?.value||"").trim();
+  if(!text)return;
+  try{
+    await api("/api/tickets/"+id+"/messages",{method:"POST",body:JSON.stringify({text})});
+    staffView?await loadStaffTickets():await loadMyTickets();
+  }catch(e){showToast("could not send ("+e.message+")");}
+};
+window.setTicket=async(id,status,staffView)=>{
+  try{
+    await api("/api/tickets/"+id,{method:"PATCH",body:JSON.stringify({status})});
+    staffView?await loadStaffTickets():await loadMyTickets();
+    refreshProfileCounts();
+  }catch(e){showToast("could not update ("+e.message+")");}
+};
+
+document.getElementById("ticketForm").addEventListener("submit",async e=>{
+  e.preventDefault();
+  if(!user){showToast("please log in first");return;}
+  const category=document.getElementById("tCat").value;
+  const message=document.getElementById("tMsg").value.trim();
+  try{
+    await api("/api/tickets",{method:"POST",body:JSON.stringify({category,message})});
+    e.target.reset();
+    showToast("ticket created ✔");
+    await loadMyTickets();
+    refreshProfileCounts();
+  }catch(err){showToast("could not create ("+err.message+")");}
+});
+
+/* ============================================================
+   applications (via worker + d1)
+   ============================================================ */
+let currentPosition="";
+window.openAppForm=pos=>{
+  currentPosition=pos;
+  document.getElementById("appPosLabel").textContent=pos;
+  document.getElementById("appFormWrap").classList.add("open");
+  document.getElementById("appFormWrap").scrollIntoView({behavior:"smooth",block:"center"});
+};
+window.closeAppForm=()=>{document.getElementById("appFormWrap").classList.remove("open");document.getElementById("appForm").reset();};
+
+document.getElementById("appForm").addEventListener("submit",async e=>{
+  e.preventDefault();
+  if(!user){showToast("please log in first");return;}
+  const age=document.getElementById("aAge").value;
+  const answer=document.getElementById("aAnswer").value.trim();
+  try{
+    await api("/api/applications",{method:"POST",body:JSON.stringify({position:currentPosition,age,answer})});
+    closeAppForm();
+    showToast("application submitted ✔");
+    await loadMyApplications();
+    refreshProfileCounts();
+  }catch(err){showToast(err.message);}
+});
+
+async function loadMyApplications(){
+  if(!user)return;
+  const box=document.getElementById("myAppList");
+  try{
+    const {applications}=await api("/api/applications");
+    box.innerHTML=applications.length
+      ? applications.map(a=>appHtml(a,false)).join("")
+      : `<div class="empty">no applications yet.</div>`;
+  }catch(e){box.innerHTML=`<div class="empty">could not load (${escapeHtml(e.message)})</div>`;}
+}
+
+function appHtml(a,review){
+  return `
+    <div class="application glass">
+      <div class="a-head">
+        <span class="a-pos">${escapeHtml(a.position)}</span>
+        <span class="a-id">#${a.id} · ${fmt(a.created)}</span>
+      </div>
+      ${review?`<div class="a-user"><img src="${a.user_avatar}" alt="">${escapeHtml(a.user_name)} · age ${escapeHtml(a.age||"—")}</div>`:""}
+      <p class="a-answer">${escapeHtml(a.answer)}</p>
+      <div class="a-status ${a.status}">status: ${a.status}${a.reviewed_by?" · by "+escapeHtml(a.reviewed_by):""}${a.review_note?" — "+escapeHtml(a.review_note):""}</div>
+      ${review&&a.status==="pending"?`
+      <div class="a-review">
+        <input id="note-${a.id}" maxlength="500" placeholder="optional note to the applicant…">
+        <button class="btn small green" onclick="reviewApp(${a.id},'accepted')">accept</button>
+        <button class="btn small danger" onclick="reviewApp(${a.id},'denied')">deny</button>
+      </div>`:""}
+    </div>`;
+}
+
+async function loadReview(){
+  if(!isHigh())return;
+  const box=document.getElementById("reviewList");
+  try{
+    const {applications}=await api("/api/applications?scope=all");
+    box.innerHTML=applications.length
+      ? applications.map(a=>appHtml(a,true)).join("")
+      : `<div class="empty">no applications yet.</div>`;
+  }catch(e){box.innerHTML=`<div class="empty">could not load (${escapeHtml(e.message)})</div>`;}
+}
+window.reviewApp=async(id,status)=>{
+  const note=(document.getElementById("note-"+id)?.value||"").trim();
+  try{
+    await api("/api/applications/"+id,{method:"PATCH",body:JSON.stringify({status,note})});
+    showToast("application "+status+" ✔");
+    await loadReview();
+  }catch(e){showToast("could not review ("+e.message+")");}
+};
+
+/* ============================================================
+   profile counters
+   ============================================================ */
+async function refreshProfileCounts(){
+  if(!user)return;
+  try{
+    const {tickets}=await api("/api/tickets");
+    document.getElementById("pfOpenTickets").textContent=tickets.filter(t=>t.status!=="closed").length;
+    document.getElementById("pfTotalTickets").textContent=tickets.length;
+  }catch(e){}
+  try{
+    const {applications}=await api("/api/applications");
+    document.getElementById("pfApps").textContent=applications.length;
+  }catch(e){}
+}
+
+/* ============================================================
+   announcements
+   ============================================================ */
+async function loadAnnouncements(){
+  if(!user)return;
+  const box=document.getElementById("annList");
+  try{
+    const {announcements}=await api("/api/announcements");
+    box.innerHTML=announcements.length
+      ? announcements.map(a=>announcementHtml(a)).join("")
+      : `<div class="empty">no announcements yet.</div>`;
+  }catch(e){box.innerHTML=`<div class="empty">could not load (${escapeHtml(e.message)})</div>`;}
+}
+function announcementHtml(a){
+  return `
+    <div class="announcement glass">
+      <div class="an-head">
+        <h3>${escapeHtml(a.title)}</h3>
+        <span class="an-date">${fmt(a.created)}</span>
+      </div>
+      <div class="an-body">${escapeHtml(a.body)}</div>
+      <div class="an-by">— ${escapeHtml(a.author_name)}</div>
+      ${isHigh()?`<button class="an-del" onclick="deleteAnnouncement(${a.id})">delete</button>`:""}
+    </div>`;
+}
+const annForm=document.getElementById("annForm");
+if(annForm)annForm.addEventListener("submit",async e=>{
+  e.preventDefault();
+  const title=document.getElementById("annTitle").value.trim();
+  const body=document.getElementById("annBody").value.trim();
+  try{
+    await api("/api/announcements",{method:"POST",body:JSON.stringify({title,body})});
+    e.target.reset();
+    showToast("announcement published ✔");
+    await loadAnnouncements();
+  }catch(err){showToast(err.message);}
+});
+window.deleteAnnouncement=async id=>{
+  try{
+    await api("/api/announcements/"+id,{method:"DELETE"});
+    await loadAnnouncements();
+  }catch(e){showToast("could not delete ("+e.message+")");}
+};
+
+/* ============================================================
+   staff activity — when each staff member was last seen
+   ============================================================ */
+function timeAgo(ts){
+  const s=Math.floor((Date.now()-ts)/1000);
+  if(s<60)return "just now";
+  const m=Math.floor(s/60); if(m<60)return m+" min ago";
+  const h=Math.floor(m/60); if(h<24)return h+"h ago";
+  const d=Math.floor(h/24); return d+"d ago";
+}
+async function loadStaffActivity(){
+  if(!isStaff())return;
+  const box=document.getElementById("activityList");
+  try{
+    const {activity}=await api("/api/staff-activity");
+    if(!activity.length){box.innerHTML=`<div class="empty">no staff activity recorded yet.</div>`;return;}
+    box.innerHTML=activity.map(a=>{
+      const online=(Date.now()-a.last_seen)<5*60*1000; // seen in last 5 min = "online"
+      const color=online?"var(--green)":"var(--text-dim)";
+      return `
+        <div class="activity-row glass">
+          <img src="${a.user_avatar}" alt="">
+          <div>
+            <div class="a-name">${escapeHtml(a.user_name)}</div>
+            <div class="a-role ${a.role}">${a.role==="high_staff"?"high staff":"staff"}</div>
+          </div>
+          <div class="a-seen">
+            <div class="a-when"><span class="a-dot" style="background:${color}"></span>${online?"online":"offline"}</div>
+            <div class="a-ago">last seen ${timeAgo(a.last_seen)}</div>
+          </div>
+        </div>`;
+    }).join("");
+  }catch(e){box.innerHTML=`<div class="empty">could not load (${escapeHtml(e.message)})</div>`;}
+}
+
+/* ============================================================
+   latest announcement on the home page
+   ============================================================ */
+async function loadHomeAnnouncement(){
+  const box=document.getElementById("homeAnn");
+  if(!user){box.innerHTML="";return;}
+  try{
+    const {announcements}=await api("/api/announcements");
+    if(!announcements.length){box.innerHTML="";return;}
+    const a=announcements[0];
+    box.innerHTML=`
+      <div class="home-ann glass" onclick="show('announcements')">
+        <span class="ha-tag">latest</span>
+        <div class="ha-body">
+          <div class="ha-title">${escapeHtml(a.title)}</div>
+          <div class="ha-text">${escapeHtml(a.body)}</div>
+        </div>
+        <span class="ha-date">${fmt(a.created)}</span>
+      </div>`;
+  }catch(e){box.innerHTML="";}
+}
+
+/* ============================================================
+   activity checks + strikes
+   ============================================================ */
+function hoursLeft(ms){
+  const h=Math.floor(ms/3600000);
+  if(h>=1)return h+"h left";
+  const m=Math.max(0,Math.floor(ms/60000));
+  return m+" min left";
+}
+async function loadChecks(){
+  if(!isStaff())return;
+  const cBox=document.getElementById("checkList");
+  const sBox=document.getElementById("strikeList");
+  try{
+    const {checks,responses,strikes}=await api("/api/checks");
+    /* checks */
+    cBox.innerHTML=checks.length?checks.map(c=>{
+      const mine=responses.find(r=>r.check_id===c.id&&r.user_id===user.id);
+      const done=responses.filter(r=>r.check_id===c.id);
+      const left=c.deadline-Date.now();
+      const expired=left<=0;
+      return `
+        <div class="check glass">
+          <div class="c-head">
+            <span class="c-title">${escapeHtml(c.title)}</span>
+            <span class="c-dead ${(!expired&&left<6*3600000)?"urgent":""}">
+              ${expired?"closed":hoursLeft(left)}
+            </span>
+          </div>
+          <div class="c-names">started by ${escapeHtml(c.created_by_name)} · ${fmt(c.created)}</div>
+          <div class="c-bar">
+            ${mine
+              ? `<span class="c-done">✓ you confirmed</span>`
+              : (expired
+                  ? `<span class="c-miss">✗ you missed this one</span>`
+                  : `<button class="btn small solid" onclick="respondCheck(${c.id})">i'm here ✋</button>`)}
+            <span class="c-done">${done.length} confirmed</span>
+            ${isOwner()?`<button class="small-btn" style="margin-left:auto" onclick="deleteCheck(${c.id})">delete</button>`:""}
+          </div>
+          ${done.length?`<div class="c-names">confirmed: ${done.map(r=>escapeHtml(r.user_name)).join(", ")}</div>`:""}
+        </div>`;
+    }).join(""):`<div class="empty">no activity checks yet.</div>`;
+
+    /* strikes */
+    sBox.innerHTML=strikes.length?strikes.map(s=>{
+      const n=Math.min(s.count,3);
+      const flagged=s.count>=3;
+      return `
+        <div class="strike-row glass ${flagged?"flagged":""}">
+          <span class="s-name">${escapeHtml(s.user_name)}</span>
+          <span class="strike-dots">${[1,2,3].map(i=>`<i class="${i<=n?"on":""}"></i>`).join("")}</span>
+          <span class="c-dead">${s.count}/3</span>
+          ${flagged?`<span class="s-flag">⚠ limit reached</span>`:""}
+          ${isOwner()?`<button class="small-btn" onclick="clearStrikes('${s.user_id}')">clear</button>`:""}
+        </div>`;
+    }).join(""):`<div class="empty">no strikes — everyone's on track.</div>`;
+  }catch(e){
+    cBox.innerHTML=`<div class="empty">could not load (${escapeHtml(e.message)})</div>`;
+    sBox.innerHTML="";
+  }
+}
+window.respondCheck=async id=>{
+  try{
+    await api("/api/checks/"+id+"/respond",{method:"POST",body:JSON.stringify({})});
+    showToast("confirmed ✔");
+    await loadChecks();
+  }catch(e){showToast(e.message);}
+};
+window.deleteCheck=async id=>{
+  try{await api("/api/checks/"+id,{method:"DELETE"});await loadChecks();}
+  catch(e){showToast(e.message);}
+};
+window.clearStrikes=async uid=>{
+  try{await api("/api/strikes/"+uid,{method:"DELETE"});showToast("strikes cleared ✔");await loadChecks();}
+  catch(e){showToast(e.message);}
+};
+const checkForm=document.getElementById("checkForm");
+if(checkForm)checkForm.addEventListener("submit",async e=>{
+  e.preventDefault();
+  const title=document.getElementById("ckTitle").value.trim()||"activity check";
+  const hours=parseInt(document.getElementById("ckHours").value)||24;
+  try{
+    await api("/api/checks",{method:"POST",body:JSON.stringify({title,hours})});
+    document.getElementById("ckTitle").value="";
+    showToast("check started ✔");
+    await loadChecks();
+  }catch(err){showToast(err.message);}
+});
+
+/* ============================================================
+   staff chat
+   ============================================================ */
+let lastChatId=0;
+async function loadStaffChat(scrollDown=true){
+  if(!isStaff())return;
+  const box=document.getElementById("chatScroll");
+  try{
+    const {messages}=await api("/api/staff-chat");
+    const newest=messages.length?messages[messages.length-1].id:0;
+    /* skip re-render if nothing changed (keeps typing smooth) */
+    if(newest===lastChatId&&box.dataset.filled==="1")return;
+    lastChatId=newest;
+    box.dataset.filled="1";
+    box.innerHTML=messages.length?messages.map(m=>`
+      <div class="chat-msg ${m.author_id===user.id?"mine":""}">
+        <img src="${m.author_avatar}" alt="">
+        <div class="cm-body">
+          <div class="cm-meta">${escapeHtml(m.author_name)}
+            <span class="cm-role ${m.role}">${m.role==="high_staff"?"high":m.role}</span>
+            · ${fmt(m.created)}
+            ${isOwner()?`<button class="cm-del" onclick="deleteChat(${m.id})">delete</button>`:""}
+          </div>
+          <div class="cm-text">${escapeHtml(m.text)}</div>
+        </div>
+      </div>`).join(""):`<div class="empty">no messages yet — say hi.</div>`;
+    if(scrollDown)box.scrollTop=box.scrollHeight;
+  }catch(e){box.innerHTML=`<div class="empty">could not load (${escapeHtml(e.message)})</div>`;}
+}
+window.sendChat=async()=>{
+  const input=document.getElementById("chatInput");
+  const text=(input.value||"").trim();
+  if(!text)return;
+  input.value="";
+  try{
+    await api("/api/staff-chat",{method:"POST",body:JSON.stringify({text})});
+    await loadStaffChat();
+  }catch(e){showToast(e.message);}
+};
+window.deleteChat=async id=>{
+  try{await api("/api/staff-chat/"+id,{method:"DELETE"});lastChatId=0;await loadStaffChat();}
+  catch(e){showToast(e.message);}
+};
+
+/* ============================================================
+   auto refresh — only for the page you're actually looking at
+   ============================================================ */
+function currentPage(){
+  const el=document.querySelector(".page.visible");
+  return el?el.id.replace("page-",""):"home";
+}
+setInterval(()=>{
+  if(document.hidden||!user)return;
+  const p=currentPage();
+  if(p==="tickets")loadMyTickets();
+  if(p==="staff")loadStaffTickets();
+},20000);          // tickets every 20s
+setInterval(()=>{
+  if(document.hidden||!user)return;
+  if(currentPage()==="staff")loadStaffChat(false);
+},8000);           // staff chat every 8s
+setInterval(()=>{
+  if(document.hidden)return;
+  if(["status","home"].includes(currentPage()))loadStatus();
+},60000);          // online count every 60s
+
+/* boot */
+loadStatus();
+handleOAuthReturn().then(()=>{renderAuth();show("home");});
+</script>
+</body>
+</html>
